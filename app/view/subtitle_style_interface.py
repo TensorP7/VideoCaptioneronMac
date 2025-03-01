@@ -557,12 +557,19 @@ class SubtitleStyleInterface(QWidget):
 
         # 获取预览方向
         orientation = self.orientationCard.comboBox.currentText()
-        preview_image = (
-            DEFAULT_BG_LANDSCAPE if orientation == "横屏" else DEFAULT_BG_PORTRAIT
-        )
-        path = preview_image["path"]
-        width = preview_image["width"]
-        height = preview_image["height"]
+        default_preview = DEFAULT_BG_LANDSCAPE if orientation == "横屏" else DEFAULT_BG_PORTRAIT
+        
+        # 检查是否存在用户自定义背景图片
+        user_bg_path = cfg.get(cfg.subtitle_preview_image)
+        if user_bg_path and Path(user_bg_path).exists():
+            path = user_bg_path
+            # 可以保持默认宽高或获取实际图片宽高
+            width = default_preview["width"]
+            height = default_preview["height"]
+        else:
+            path = default_preview["path"]
+            width = default_preview["width"]
+            height = default_preview["height"]
 
         # 创建预览线程
         self.preview_thread = PreviewThread(
