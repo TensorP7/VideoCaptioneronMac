@@ -559,7 +559,7 @@ class ASRData:
             and all(count <= 4 for count in blocks_lines_count)
             and sum(count == 4 for count in blocks_lines_count)
             / len(blocks_lines_count)
-            >= 0.96
+            >= 0.98
         ):
             has_translated_subtitle = True
         else:
