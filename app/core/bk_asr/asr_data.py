@@ -3,6 +3,27 @@ import math
 import re
 from pathlib import Path
 from typing import List, Tuple
+import os
+import platform
+
+
+def handle_long_path(path: str) -> str:
+    """处理Windows系统中的长路径问题
+
+    Args:
+        path: 原始路径
+
+    Returns:
+        处理后的路径
+    """
+    # 检查是否是Windows系统
+    if platform.system() == "Windows":
+        # 如果路径长度超过260个字符，添加\\?\前缀
+        if len(path) > 260 and not path.startswith("\\\\?\\"):
+            # 转换为绝对路径
+            abs_path = os.path.abspath(path)
+            return f"\\\\?\\{abs_path}"
+    return path
 
 
 class ASRDataSeg:
@@ -186,9 +207,13 @@ class ASRData:
             ass_style: ASS样式字符串,为空则使用默认样式
             layout: 字幕布局,可选值["原文在上", "译文在上", "仅原文", "仅译文"]
         """
-        Path(save_path).parent.mkdir(parents=True, exist_ok=True)
-        if save_path.endswith(".srt"):
+        # 处理Windows长路径问题
+        save_path = handle_long_path(save_path)
 
+        # 创建目录
+        Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+
+        if save_path.endswith(".srt"):
             self.to_srt(save_path=save_path, layout=layout)
         elif save_path.endswith(".txt"):
             self.to_txt(save_path=save_path, layout=layout)
@@ -222,6 +247,9 @@ class ASRData:
             result.append(text)
         text = "\n".join(result)
         if save_path:
+            # 处理Windows长路径问题
+            save_path = handle_long_path(save_path)
+
             with open(save_path, "w", encoding="utf-8") as f:
                 f.write("\n".join(result))
         return text
@@ -250,6 +278,9 @@ class ASRData:
 
         srt_text = "\n".join(srt_lines)
         if save_path:
+            # 处理Windows长路径问题
+            save_path = handle_long_path(save_path)
+
             with open(save_path, "w", encoding="utf-8") as f:
                 f.write(srt_text)
         return srt_text
@@ -353,6 +384,9 @@ class ASRData:
                 )
 
         if save_path:
+            # 处理Windows长路径问题
+            save_path = handle_long_path(save_path)
+
             with open(save_path, "w", encoding="utf-8") as f:
                 f.write(ass_content)
         return ass_content
