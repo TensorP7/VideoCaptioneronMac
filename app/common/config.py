@@ -90,11 +90,11 @@ class Config(QConfig):
     )
 
     ollama_model = ConfigItem("LLM", "Ollama_Model", "llama2")
-    ollama_api_key = ConfigItem("LLM", "Ollama_API_Key", "")
+    ollama_api_key = ConfigItem("LLM", "Ollama_API_Key", "ollama")
     ollama_api_base = ConfigItem("LLM", "Ollama_API_Base", "http://localhost:11434/v1")
 
     lm_studio_model = ConfigItem("LLM", "LmStudio_Model", "qwen2.5:7b")
-    lm_studio_api_key = ConfigItem("LLM", "LmStudio_API_Key", "")
+    lm_studio_api_key = ConfigItem("LLM", "LmStudio_API_Key", "lmstudio")
     lm_studio_api_base = ConfigItem(
         "LLM", "LmStudio_API_Base", "http://localhost:1234/v1"
     )
@@ -133,7 +133,7 @@ class Config(QConfig):
     )
     deeplx_endpoint = ConfigItem("Translate", "DeeplxEndpoint", "")
     batch_size = RangeConfigItem("Translate", "BatchSize", 10, RangeValidator(5, 30))
-    thread_num = RangeConfigItem("Translate", "ThreadNum", 10, RangeValidator(1, 50))
+    thread_num = RangeConfigItem("Translate", "ThreadNum", 10, RangeValidator(1, 100))
 
     # ------------------- 转录配置 -------------------
     transcribe_model = OptionsConfigItem(
