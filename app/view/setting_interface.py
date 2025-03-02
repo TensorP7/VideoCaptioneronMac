@@ -253,6 +253,18 @@ class SettingInterface(ScrollArea):
             parent=self.llmGroup,
         )
 
+        # 创建OPENAI官方API链接卡片
+        self.openaiOfficialApiCard = HyperlinkCard(
+            "https://api.videocaptioner.cn/register?aff=UrLB",
+            self.tr("访问"),
+            FIF.DEVELOPER_TOOLS,
+            self.tr("VideoCaptioner 官方API"),
+            self.tr("集成多种大语言模型，支持高并发字幕优化、翻译"),
+            self.llmGroup,
+        )
+        # 默认隐藏
+        self.openaiOfficialApiCard.setVisible(False)
+
         # 定义每个服务的配置
         service_configs = {
             LLMServiceEnum.OPENAI: {
@@ -505,6 +517,8 @@ class SettingInterface(ScrollArea):
 
         # 添加LLM配置卡片
         self.llmGroup.addSettingCard(self.llmServiceCard)
+        # 添加OPENAI官方API链接卡片
+        self.llmGroup.addSettingCard(self.openaiOfficialApiCard)
         for config in self.llm_service_configs.values():
             for card in config["cards"]:
                 self.llmGroup.addSettingCard(card)
@@ -696,10 +710,31 @@ class SettingInterface(ScrollArea):
             for card in config["cards"]:
                 card.setVisible(False)
 
+        # 隐藏OPENAI官方API链接卡片
+        self.openaiOfficialApiCard.setVisible(False)
+
         # 显示选中服务的卡片
         if current_service in self.llm_service_configs:
             for card in self.llm_service_configs[current_service]["cards"]:
                 card.setVisible(True)
+
+            # 为OLLAMA和LM_STUDIO设置默认API Key
+            service_config = self.llm_service_configs[current_service]
+            if current_service == LLMServiceEnum.OLLAMA and service_config["api_key"]:
+                # 如果API Key为空，设置默认值"ollama"
+                if not service_config["api_key"].lineEdit.text():
+                    service_config["api_key"].lineEdit.setText("ollama")
+            if (
+                current_service == LLMServiceEnum.LM_STUDIO
+                and service_config["api_key"]
+            ):
+                # 如果API Key为空，设置默认值 "lm-studio"
+                if not service_config["api_key"].lineEdit.text():
+                    service_config["api_key"].lineEdit.setText("lm-studio")
+
+            # 如果是OPENAI服务，显示官方API链接卡片
+            if current_service == LLMServiceEnum.OPENAI:
+                self.openaiOfficialApiCard.setVisible(True)
 
         # 更新布局
         self.llmGroup.adjustSize()
