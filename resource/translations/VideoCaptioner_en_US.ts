@@ -165,7 +165,7 @@
     </message>
     <message>
         <location filename="../../app/view/batch_process_interface.py" line="182"/>
-        <source>已取消批量处理任���</source>
+        <source>已取消批量处理任   </source>
         <translation type="obsolete">Batch processing cancelled</translation>
     </message>
     <message>
@@ -2024,7 +2024,7 @@ Note: When using a small LLM model, it is recommended to keep the script within 
     <message>
         <location filename="../../app/view/batch_process_interface.py" line="701"/>
         <source>开始转录</source>
-        <translation type="obsolete">Transcripe</translation>
+        <translation type="obsolete">Transcribe</translation>
     </message>
     <message>
         <location filename="../../app/view/batch_process_interface.py" line="488"/>
@@ -2250,7 +2250,7 @@ Note: When using a small LLM model, it is recommended to keep the script within 
     <message>
         <location filename="../../app/view/transcription_interface.py" line="261"/>
         <source>开始转录</source>
-        <translation>Transcripe</translation>
+        <translation>Transcribe</translation>
     </message>
     <message>
         <location filename="../../app/view/transcription_interface.py" line="149"/>
