@@ -54,11 +54,18 @@ class JianYingASR(BaseASR):
             "words_per_line": 16
         }
 
-        sign, device_time = self._generate_sign_parameters(url='/lv/v1/audio_subtitle/submit', pf='4', appvr='4.0.0',
+        sign, device_time = self._generate_sign_parameters(url='/lv/v1/audio_subtitle/submit', pf='4', appvr='6.6.0',
                                                            tdid=self.tdid)
         headers = self._build_headers(device_time, sign)
         response = requests.post(url, json=payload, headers=headers)
-        query_id = response.json()['data']['id']
+        resp_data = response.json()
+        
+        if resp_data.get('ret') != '0':
+            error_msg = f"API Error: {resp_data.get('errmsg', 'Unknown error')} (ret: {resp_data.get('ret')})"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        query_id = resp_data['data']['id']
         return query_id
 
     def upload(self):
@@ -77,11 +84,18 @@ class JianYingASR(BaseASR):
             "id": query_id,
             "pack_options": {"need_attribute": True}
         }
-        sign, device_time = self._generate_sign_parameters(url='/lv/v1/audio_subtitle/query', pf='4', appvr='4.0.0',
+        sign, device_time = self._generate_sign_parameters(url='/lv/v1/audio_subtitle/query', pf='4', appvr='6.6.0',
                                                            tdid=self.tdid)
         headers = self._build_headers(device_time, sign)
         response = requests.post(url, json=payload, headers=headers)
-        return response.json()
+        resp_data = response.json()
+        
+        if resp_data.get('ret') != '0':
+            error_msg = f"API Error: {resp_data.get('errmsg', 'Unknown error')} (ret: {resp_data.get('ret')})"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+            
+        return resp_data
 
     def _run(self, callback=None):
         if callback:
@@ -121,7 +135,7 @@ class JianYingASR(BaseASR):
         ed = f"3278516897751" if int(i)%2 != 0 else f"{uuid.getnode():013d}"
         return f"{fr}{ed}"
 
-    def _generate_sign_parameters(self, url: str, pf: str = '4', appvr: str = '4.0.0', tdid='') -> \
+    def _generate_sign_parameters(self, url: str, pf: str = '4', appvr: str = '6.6.0', tdid='') -> \
             Tuple[str, str]:
         """Generate signature and timestamp via an HTTP request"""
         current_time = str(int(time.time()))
@@ -155,8 +169,8 @@ class JianYingASR(BaseASR):
     def _build_headers(self, device_time: str, sign: str) -> Dict[str, str]:
         """Build headers for requests"""
         return {
-            'User-Agent': "Cronet/TTNetVersion:01594da2 2023-03-14 QuicVersion:46688bb4 2022-11-28",
-            'appvr': "4.0.0",
+            'User-Agent': "Cronet/TTNetVersion:d4572e53 2024-06-12 QuicVersion:4bf243e0 2023-04-17",
+            'appvr': "6.6.0",
             'device-time': str(device_time),
             'pf': "4",
             'sign': sign,
@@ -176,7 +190,7 @@ class JianYingASR(BaseASR):
         """Get upload sign"""
         url = "https://lv-pc-api-sinfonlinec.ulikecam.com/lv/v1/upload_sign"
         payload = json.dumps({"biz": "pc-recognition"})
-        sign, device_time = self._generate_sign_parameters(url='/lv/v1/upload_sign', pf='4', appvr='4.0.0',
+        sign, device_time = self._generate_sign_parameters(url='/lv/v1/upload_sign', pf='4', appvr='6.6.0',
                                                            tdid=self.tdid)
         headers = self._build_headers(device_time, sign)
         response = requests.post(url, data=payload, headers=headers)
